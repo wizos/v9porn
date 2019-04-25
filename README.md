@@ -15,6 +15,13 @@ rxjava + retrofit + rxcache + mvp + jsoup + dagger2
 
 ### 更新日志：
 
+-----2019年04月25日 v1.1.1
+
+1. 修复p*gav无法解析以及视频无法播放问题
+2. 优化论坛图片显示问题
+3. 其他改动调整及bug修复
+
+
 -----2019年03月22日 v1.1.0
 
 感谢[Cabchinoe](https://github.com/Cabchinoe)提供的最新9*Porn视频地址解析方法，我个人尝试了另一种方式，即使用一个不可见的WebView加载md5.js，然后调用js解密参数也能实现地址解析

@@ -9,8 +9,8 @@ android {
         applicationId "com.u9porn"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 11
-        versionName "1.1.0"
+        versionCode 12
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -45,13 +45,13 @@ greendao {
 }
 
 bugly {
-    appId = "" // 注册时分配的App ID
+    appId = "e426041d83" // 注册时分配的App ID
     appKey = "" // 注册时分配的App Key
     appVersion = '1.1.0' //App版本
     execute = false //插件开关
-    upload = false //上传开关
-    uploadMapping = false //Mapping文件上传开关
-    uploadSymbol = false //Symbol文件上传开关
+    upload = true //上传开关
+    uploadMapping = true //Mapping文件上传开关
+    uploadSymbol = true //Symbol文件上传开关
 }
 /*
 bugsnag {

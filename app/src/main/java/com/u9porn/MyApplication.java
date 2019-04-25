@@ -50,7 +50,7 @@ public class MyApplication extends DaggerApplication {
             //初始化bug收集
           //  Bugsnag.init(this);
         }
-        CrashReport.initCrashReport(getApplicationContext(), "", BuildConfig.DEBUG);
+        CrashReport.initCrashReport(getApplicationContext(), "e426041d83", BuildConfig.DEBUG);
         BGASwipeBackHelper.init(this, null);
     }
 

@@ -52,7 +52,9 @@ import com.u9porn.rxjava.RetryWhenProcess;
 import com.u9porn.utils.AddressHelper;
 import com.u9porn.utils.UserHelper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -428,29 +430,60 @@ public class AppApiHelper implements ApiHelper {
 
     @Override
     public Observable<PxgavResultWithBlockId> loadMorePxgavListByCategory(String category, int page, String lastBlockId, boolean pullToRefresh) {
-//        DynamicKeyGroup dynamicKeyGroup = new DynamicKeyGroup(category, page);
-//        EvictDynamicKeyGroup evictDynamicKeyGroup = new EvictDynamicKeyGroup(pullToRefresh);
-        String action = "td_ajax_block";
-//        PxgavFormRequest pavFormRequest = new PxgavFormRequest();
-//        pavFormRequest.setCategory_id("672");
-//        pavFormRequest.setLimit("10");
-//        pavFormRequest.setSort("random_posts");
-//        pavFormRequest.setAjax_pagination("load_more");
-//        pavFormRequest.setTd_filter_default_txt("All");
-//        pavFormRequest.setTd_column_number(3);
-//        pavFormRequest.setF_header_font_title("Block header");
-//        pavFormRequest.setF_ajax_font_title("Ajax categories");
-//        pavFormRequest.setF_more_font_title("Load more button");
-//        pavFormRequest.setMx4f_title_font_title("Article title");
-//        pavFormRequest.setMx4f_cat_font_title("Article category tag");
-//        pavFormRequest.setTd_filter_default_txt("所有");
-//        pavFormRequest.setClassX("td_uid_11_5b793d4fdd2fa_rand");
-//        pavFormRequest.setTdc_css_class("td_uid_11_5b793d4fdd2fa_rand");
-//        pavFormRequest.setTdc_css_class_style("td_uid_11_5b793d4fdd2fa_rand_style");
-        String tdAtts = "{\"custom_title\":\"\",\"category_id\":\"\",\"sort\":\"random_posts\",\"limit\":\"10\",\"ajax_pagination\":\"load_more\",\"separator\":\"\",\"custom_url\":\"\",\"block_template_id\":\"\",\"border_top\":\"\",\"color_preset\":\"\",\"mx4_tl\":\"\",\"post_ids\":\"\",\"category_ids\":\"\",\"tag_slug\":\"\",\"autors_id\":\"\",\"installed_post_types\":\"\",\"offset\":\"\",\"el_class\":\"\",\"td_ajax_filter_type\":\"\",\"td_ajax_filter_ids\":\"\",\"td_filter_default_txt\":\"All\",\"td_ajax_preloading\":\"\",\"f_header_font_header\":\"\",\"f_header_font_title\":\"Block header\",\"f_header_font_settings\":\"\",\"f_header_font_family\":\"\",\"f_header_font_size\":\"\",\"f_header_font_line_height\":\"\",\"f_header_font_style\":\"\",\"f_header_font_weight\":\"\",\"f_header_font_transform\":\"\",\"f_header_font_spacing\":\"\",\"f_header_\":\"\",\"f_ajax_font_title\":\"Ajax categories\",\"f_ajax_font_settings\":\"\",\"f_ajax_font_family\":\"\",\"f_ajax_font_size\":\"\",\"f_ajax_font_line_height\":\"\",\"f_ajax_font_style\":\"\",\"f_ajax_font_weight\":\"\",\"f_ajax_font_transform\":\"\",\"f_ajax_font_spacing\":\"\",\"f_ajax_\":\"\",\"f_more_font_title\":\"Load more button\",\"f_more_font_settings\":\"\",\"f_more_font_family\":\"\",\"f_more_font_size\":\"\",\"f_more_font_line_height\":\"\",\"f_more_font_style\":\"\",\"f_more_font_weight\":\"\",\"f_more_font_transform\":\"\",\"f_more_font_spacing\":\"\",\"f_more_\":\"\",\"mx4f_title_font_header\":\"\",\"mx4f_title_font_title\":\"Article title\",\"mx4f_title_font_settings\":\"\",\"mx4f_title_font_family\":\"\",\"mx4f_title_font_size\":\"\",\"mx4f_title_font_line_height\":\"\",\"mx4f_title_font_style\":\"\",\"mx4f_title_font_weight\":\"\",\"mx4f_title_font_transform\":\"\",\"mx4f_title_font_spacing\":\"\",\"mx4f_title_\":\"\",\"mx4f_cat_font_title\":\"Article category tag\",\"mx4f_cat_font_settings\":\"\",\"mx4f_cat_font_family\":\"\",\"mx4f_cat_font_size\":\"\",\"mx4f_cat_font_line_height\":\"\",\"mx4f_cat_font_style\":\"\",\"mx4f_cat_font_weight\":\"\",\"mx4f_cat_font_transform\":\"\",\"mx4f_cat_font_spacing\":\"\",\"mx4f_cat_\":\"\",\"ajax_pagination_infinite_stop\":\"\",\"css\":\"\",\"tdc_css\":\"\",\"td_column_number\":3,\"header_color\":\"\",\"class\":\"" + lastBlockId + "_rand\",\"tdc_css_class\":\"" + lastBlockId + "_rand\",\"tdc_css_class_style\":\"" + lastBlockId + "_rand_style\"}";
-        int tdColumnNumber = 3;
-        String blockType = "td_block_16";
-        return actionMore(pavServiceApi.moreVideoList(action, tdAtts, lastBlockId, tdColumnNumber, page, blockType, "", ""), pullToRefresh);
+        Map<String, String> map = new HashMap<>();
+        map.put("action","penci_ajax_block");
+        map.put("datafilter[build_query]","post_type:post|size:23|order_by:rand");
+        map.put("datafilter[add_title_icon]","");
+        map.put("datafilter[title_i_align]","left");
+        map.put("datafilter[title_icon]","");
+        map.put("datafilter[image_type]","landscape");
+        map.put("datafilter[block_title_meta_settings]","");
+        map.put("datafilter[block_title_align]","style-title-left");
+        map.put("datafilter[block_title_off_uppercase]","");
+        map.put("datafilter[block_title_wborder_left_right]","5px");
+        map.put("datafilter[block_title_wborder]","3px");
+        map.put("datafilter[post_title_trimword_settings]","");
+        map.put("datafilter[post_standard_title_length]","15");
+        map.put("datafilter[hide_comment]","true");
+        map.put("datafilter[hide_post_date]","true");
+        map.put("datafilter[hide_icon_post_format]","true");
+        map.put("datafilter[hide_cat]","true");
+        map.put("datafilter[show_allcat]","");
+        map.put("datafilter[hide_count_view]","true");
+        map.put("datafilter[hide_review_piechart]","true");
+        map.put("datafilter[show_readmore]","");
+        map.put("datafilter[show_author]","");
+        map.put("datafilter[dis_bg_block]","true");
+        map.put("datafilter[enable_stiky_post]","");
+        map.put("datafilter[hide_excrept]","true");
+        map.put("datafilter[post_excrept_length]","15");
+        map.put("datafilter[style_pag]","load_more");
+        map.put("datafilter[limit_loadmore]","8");
+        map.put("datafilter[readmore_css]","");
+        map.put("datafilter[post_category_css]","");
+        map.put("datafilter[pagination_css]","");
+        map.put("datafilter[loadmore_css]","");
+        map.put("datafilter[disable_bg_load_more]","");
+        map.put("datafilter[custom_markup_1]","");
+        map.put("datafilter[ajax_filter_type]","");
+        map.put("datafilter[ajax_filter_selected]","");
+        map.put("datafilter[ajax_filter_childselected]","");
+        map.put("datafilter[ajax_filter_number_item]","5");
+        map.put("datafilter[infeed_ads__order]","22");
+        map.put("datafilter[block_id]","penci_block_14-1551151497775");
+        map.put("datafilter[penci_show_desk]","1");
+        map.put("datafilter[penci_show_tablet]","1");
+        map.put("datafilter[penci_show_mobile]","1");
+        map.put("datafilter[paged]","1");
+        map.put("datafilter[unique_id]","penci_block_14__83050151");
+        map.put("datafilter[shortcode_id]","block_14");
+        map.put("datafilter[category_ids]","");
+        map.put("datafilter[taxonomy]","");
+        map.put("styleAction","load_more");
+        map.put("paged",""+page);
+        map.put("datacontent","JTNDY2VudGVyJTNFJTNDc2NyaXB0JTIwdHlwZSUzRCUyMnRleHQlMkZqYXZhc2NyaXB0JTIyJTIwZGF0YS1pZHpvbmUlM0QlMjIzMzM3NDA4JTIyJTIwc3JjJTNEJTIyaHR0cHMlM0ElMkYlMkZhZHMuZXhvc3J2LmNvbSUyRm5hdGl2ZWFkcy5qcyUyMiUzRSUzQyUyRnNjcmlwdCUzRSUzQyUyRmNlbnRlciUzRQ==");
+        map.put("nonce","7f02fb57e5");
+        return actionMore(pavServiceApi.moreVideoList(map), pullToRefresh);
     }
 
     @Override
@@ -570,8 +603,8 @@ public class AppApiHelper implements ApiHelper {
                 .map(s -> {
                     Logger.t(TAG).d("p*gav 更多原始数据：" + s);
                     PxgavLoadMoreResponse pxgavLoadMoreResponse = gson.fromJson(s, PxgavLoadMoreResponse.class);
-                    BaseResult<PxgavResultWithBlockId> baseResult = ParsePxgav.videoList(pxgavLoadMoreResponse.getTd_data(), true);
-                    baseResult.getData().setBlockId(pxgavLoadMoreResponse.getTd_block_id());
+                    BaseResult<PxgavResultWithBlockId> baseResult = ParsePxgav.moreVideoList(pxgavLoadMoreResponse.getData().getItems());
+                    //baseResult.getData().setBlockId(pxgavLoadMoreResponse.getTd_block_id());
                     return baseResult.getData();
                 });
     }
@@ -580,7 +613,7 @@ public class AppApiHelper implements ApiHelper {
         return observable
                 .map(Reply::getData)
                 .map(s -> {
-                    BaseResult<PxgavResultWithBlockId> baseResult = ParsePxgav.videoList(s,false );
+                    BaseResult<PxgavResultWithBlockId> baseResult = ParsePxgav.videoList(s, false);
                     return baseResult.getData();
                 });
     }
