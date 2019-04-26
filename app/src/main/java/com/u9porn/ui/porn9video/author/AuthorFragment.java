@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.orhanobut.logger.Logger;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.u9porn.R;
@@ -63,25 +62,21 @@ public class AuthorFragment extends MvpFragment<AuthorView, AuthorPresenter> imp
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mV91PornAdapter = new V91PornAdapter(R.layout.item_v_9porn);
-        mV91PornAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                V9PornItem v9PornItems = (V9PornItem) adapter.getData().get(position);
-                BasePlayVideo basePlayVideo = (BasePlayVideo) getActivity();
-                if (basePlayVideo != null) {
-                    basePlayVideo.setV9PornItems(v9PornItems);
-                    basePlayVideo.initData();
-                }
+        mV91PornAdapter.setOnItemClickListener((adapter, view, position) -> {
+            V9PornItem v9PornItems = (V9PornItem) adapter.getData().get(position);
+            BasePlayVideo basePlayVideo = (BasePlayVideo) getActivity();
+            if (basePlayVideo != null) {
+                basePlayVideo.setV9PornItems(v9PornItems);
+                basePlayVideo.initData();
             }
         });
-        mV91PornAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                if (canLoadAuthorVideos()) {
-                    presenter.authorVideos(v9PornItem.getVideoResult().getOwnerId(), false);
-                }
-
+        mV91PornAdapter.setOnLoadMoreListener(() -> {
+            if (canLoadAuthorVideos()) {
+                presenter.authorVideos(v9PornItem.getVideoResult().getOwnerId(), false);
+            } else {
+                showError("数据错误，无法加载");
             }
+
         }, recyclerView);
 
     }
@@ -106,12 +101,11 @@ public class AuthorFragment extends MvpFragment<AuthorView, AuthorPresenter> imp
 
     private void init() {
         AppUtils.setColorSchemeColors(getContext(), swipeLayout);
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (canLoadAuthorVideos()) {
-                    presenter.authorVideos(v9PornItem.getVideoResult().getOwnerId(), true);
-                }
+        swipeLayout.setOnRefreshListener(() -> {
+            if (canLoadAuthorVideos()) {
+                presenter.authorVideos(v9PornItem.getVideoResult().getOwnerId(), true);
+            } else {
+                showError("数据错误，无法加载");
             }
         });
 
@@ -122,7 +116,11 @@ public class AuthorFragment extends MvpFragment<AuthorView, AuthorPresenter> imp
     @Override
     protected void onLazyLoadOnce() {
         super.onLazyLoadOnce();
-        loadAuthorVideos();
+        if (canLoadAuthorVideos()) {
+            loadAuthorVideos();
+        } else {
+            showError("数据错误，无法加载");
+        }
     }
 
     public void loadAuthorVideos() {
@@ -131,7 +129,7 @@ public class AuthorFragment extends MvpFragment<AuthorView, AuthorPresenter> imp
     }
 
     private boolean canLoadAuthorVideos() {
-        return presenter.isUserLogin() && v9PornItem != null && v9PornItem.getVideoResultId() != 0;
+        return v9PornItem != null && v9PornItem.getVideoResult() != null && v9PornItem.getVideoResultId() != 0;
     }
 
     @Override

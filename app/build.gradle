@@ -9,8 +9,8 @@ android {
         applicationId "com.u9porn"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 12
-        versionName "1.1.1"
+        versionCode 13
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -47,7 +47,7 @@ greendao {
 bugly {
     appId = "e426041d83" // 注册时分配的App ID
     appKey = "" // 注册时分配的App Key
-    appVersion = '1.1.0' //App版本
+    appVersion = '1.1.2' //App版本
     execute = false //插件开关
     upload = true //上传开关
     uploadMapping = true //Mapping文件上传开关
@@ -106,7 +106,9 @@ dependencies {
     implementation 'com.liulishuo.filedownloader:library:1.7.4'
     implementation 'com.ycjiang:loadviewhelper:1.1.2'
     implementation 'com.yanzhenjie:permission:1.1.2'
-    implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
+    implementation ('com.sdsmdg.tastytoast:tastytoast:0.1.1'){
+        exclude group: 'com.android.support'
+    }
     //https://app.bugsnag.com/accounts/cbs-1/projects/android/integrate bug收集
     //implementation 'com.bugsnag:bugsnag-android:4.5.0'
     implementation 'com.github.rubensousa:floatingtoolbar:1.5.1'
@@ -119,7 +121,7 @@ dependencies {
     implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0@aar'
     implementation 'com.jaeger.statusbarutil:library:1.5.1'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
-    implementation('com.github.bumptech.glide:glide:4.8.0') {
+    implementation('com.github.bumptech.glide:glide:4.9.0') {
         exclude group: "com.android.support"
     }
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
@@ -127,7 +129,7 @@ dependencies {
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
     implementation 'me.jessyan:retrofit-url-manager:1.2.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'com.oushangfeng:PinnedSectionItemDecoration:1.2.4'
+    implementation 'com.oushangfeng:PinnedSectionItemDecoration:1.3.2'
     implementation 'cn.pedant.safewebviewbridge:library:1.4'
     // Dagger2 dependencies
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"

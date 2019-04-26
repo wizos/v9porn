@@ -3,7 +3,6 @@ package com.u9porn.ui.splash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.webkit.WebView;
 import android.widget.Button;
 
 import com.orhanobut.logger.Logger;
@@ -34,9 +33,6 @@ public class SplashActivity extends MvpActivity<SplashView, SplashPresenter> imp
     protected SplashPresenter splashPresenter;
     @BindView(R.id.bt_skip_splash)
     Button btSkipSplash;
-
-    @Inject
-    protected WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
