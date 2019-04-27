@@ -20,6 +20,8 @@ rxjava + retrofit + rxcache + mvp + jsoup + dagger2
 1. 修复因升级targetSdkVersion28导致的下载以及浏览论坛崩溃问题
 2. 现在不登录也能无限制观看作者其他的视频
 3. 其他改动调整及bug修复
+
+
 **注意：无法自动更新或者9.0以上系统需要手动下载apk升级**
 
 -----2019年04月25日 v1.1.1
