@@ -20,6 +20,7 @@ rxjava + retrofit + rxcache + mvp + jsoup + dagger2
 1. 修复因升级targetSdkVersion28导致的下载以及浏览论坛崩溃问题
 2. 现在不登录也能无限制观看作者其他的视频
 3. 其他改动调整及bug修复
+**注意：无法自动更新或者9.0以上系统需要手动下载apk升级**
 
 -----2019年04月25日 v1.1.1
 
@@ -39,29 +40,6 @@ rxjava + retrofit + rxcache + mvp + jsoup + dagger2
 4. 去掉一些依赖，升级了部分库版本，最低api支持为19，即4.4以上
 6. 其他改动调整及bug修复
 
-
------2019年01月13日 v1.0.9
-
-1. 修复9*porn无法登陆问题
-2. 9*porn不用登录也可以查看作者的其他视频了
-3. 修复P*gav无法播放视频问题
-4. 修复九妹图社部分图集无法解析问题
-5. 增加A*gle视频搜索
-6. 其他改动调整及bug修复
-
-------2018年10月4日 v1.0.8
-1. 修复适配JiaoZiVideoPlayer播放引擎
-2. 修复9*PORN除主页外其他分类打开崩溃的Bug
-
-------2018年10月2日 v1.0.7
-
-本版本代码改动较大，可能隐藏有较多的bug
-
-1. 修复朱*力视频无法解析问题
-2. 修复九妹图社无法解析图片列表图片错误问题
-3. 下载增加重试下载功能[Archive94](https://github.com/Archive94)
-4. 修复9*PORN登陆账号后可能会有20次观看次数限制问题[Archive94](https://github.com/Archive94)
-5. 其他改动调整及bug修复
 
 **注意：v1.0.1以下版本需要手动下载apk并卸载重新安装，否则程序崩溃且下版本无法自动更新（之前项目老版本需卸载重装）**
 [更多更新日志...](https://github.com/techGay/v9porn/blob/master/UPGRADE_LOG.md)
