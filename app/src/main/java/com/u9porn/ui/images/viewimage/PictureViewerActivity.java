@@ -2,14 +2,12 @@ package com.u9porn.ui.images.viewimage;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -23,12 +21,12 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.u9porn.R;
 import com.u9porn.adapter.PictureAdapter;
+import com.u9porn.constants.Keys;
 import com.u9porn.data.model.Mm99;
 import com.u9porn.ui.MvpActivity;
 import com.u9porn.utils.DialogUtils;
 import com.u9porn.utils.GlideApp;
 import com.u9porn.utils.SDCardUtils;
-import com.u9porn.constants.Keys;
 import com.u9porn.widget.ProblematicViewPager;
 
 import java.io.File;
@@ -64,16 +62,15 @@ public class PictureViewerActivity extends MvpActivity<PictureViewerView, Pictur
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
         ButterKnife.bind(this);
+        goFullScreen();
         alertDialog = DialogUtils.initLoadingDialog(this, "解析图片列表中，请稍后...");
         init();
         initListener();
-        goFullScreen();
     }
 
     @NonNull
     @Override
     public PictureViewerPresenter createPresenter() {
-        getActivityComponent().inject(this);
         return pictureViewerPresenter;
     }
 
@@ -100,7 +97,7 @@ public class PictureViewerActivity extends MvpActivity<PictureViewerView, Pictur
         }
         Mm99 mm99 = (Mm99) getIntent().getSerializableExtra(Keys.KEY_INTENT_99_MM_ITEM);
         if (mm99 != null) {
-            presenter.list99MmPicture(mm99.getId(), mm99.getImgUrl(), false);
+            presenter.list99MmPicture(mm99.getId(), mm99.getContentUrl(), false);
         }
     }
 
@@ -117,6 +114,9 @@ public class PictureViewerActivity extends MvpActivity<PictureViewerView, Pictur
 
             @Override
             public void onImageLongClick(View view, int position) {
+                if (imageList == null) {
+                    return;
+                }
                 showSavePictureDialog(imageList.get(position));
             }
         });
@@ -151,32 +151,29 @@ public class PictureViewerActivity extends MvpActivity<PictureViewerView, Pictur
 
     private void showSavePictureDialog(final String imageUrl) {
         QMUIDialog.MenuDialogBuilder builder = new QMUIDialog.MenuDialogBuilder(this);
-        builder.addItem("保存图片", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                GlideApp.with(PictureViewerActivity.this).downloadOnly().load(Uri.parse(imageUrl)).into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                        File filePath = new File(SDCardUtils.DOWNLOAD_IMAGE_PATH);
-                        if (!filePath.exists()) {
-                            if (!filePath.mkdirs()) {
-                                showMessage("创建文件夹失败了", TastyToast.ERROR);
-                                return;
-                            }
-                        }
-                        File file = new File(filePath, UUID.randomUUID().toString() + ".jpg");
-                        try {
-                            FileUtils.copyFile(resource, file);
-                            showMessage("保存图片成功了", TastyToast.SUCCESS);
-                            notifySystemGallery(file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            showMessage("保存图片失败了", TastyToast.ERROR);
+        builder.addItem("保存图片", (dialog, which) -> {
+            GlideApp.with(PictureViewerActivity.this).downloadOnly().load(Uri.parse(imageUrl)).into(new SimpleTarget<File>() {
+                @Override
+                public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                    File filePath = new File(SDCardUtils.DOWNLOAD_IMAGE_PATH);
+                    if (!filePath.exists()) {
+                        if (!filePath.mkdirs()) {
+                            showMessage("创建文件夹失败了", TastyToast.ERROR);
+                            return;
                         }
                     }
-                });
-                dialog.dismiss();
-            }
+                    File file = new File(filePath, UUID.randomUUID().toString() + ".jpg");
+                    try {
+                        FileUtils.copyFile(resource, file);
+                        showMessage("保存图片成功了", TastyToast.SUCCESS);
+                        notifySystemGallery(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showMessage("保存图片失败了", TastyToast.ERROR);
+                    }
+                }
+            });
+            dialog.dismiss();
         });
         builder.show();
     }
@@ -188,45 +185,36 @@ public class PictureViewerActivity extends MvpActivity<PictureViewerView, Pictur
     }
 
     private void notifySystemGallery(File file) {
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(context.getApplicationContext(), "com.u91porn.fileprovider", file);
-        } else {
-            uri = Uri.fromFile(file);
-        }
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(uri);
-        sendBroadcast(intent);
+
+        MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, new String[]{"image/jpeg"}, null);
     }
 
     protected void goFullScreen() {
         isFullScreen = true;
+        tvNum.setVisibility(View.INVISIBLE);
         setUiFlags(true);
     }
 
     protected void exitFullScreen() {
         isFullScreen = false;
+        tvNum.setVisibility(View.VISIBLE);
         setUiFlags(false);
     }
 
     private void setUiFlags(boolean fullscreen) {
         View decorView = getWindow().getDecorView();
-        if (decorView != null) {
-            decorView.setSystemUiVisibility(fullscreen ? getFullscreenUiFlags() : View.SYSTEM_UI_FLAG_VISIBLE);
-        }
+        decorView.setSystemUiVisibility(fullscreen ? getFullscreenUiFlags() : View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private int getFullscreenUiFlags() {
         int flags = View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            flags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        }
+        flags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             flags |= View.SYSTEM_UI_FLAG_IMMERSIVE;
         }

@@ -11,7 +11,11 @@ public interface IUser extends IBaseUser {
     void saveUserInfoPrf(String username, String password);
     void saveUserInfoPrf(String username, String password,boolean isRememberPassword,boolean isAutoLogin);
 
+    void loadCaptcha();
+
     String getUserName();
     String getPassword();
     boolean isAutoLogin();
+
+    String getVideo9PornAddress();
 }

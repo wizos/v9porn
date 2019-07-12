@@ -7,16 +7,13 @@ import android.text.TextUtils;
 import com.orhanobut.logger.Logger;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.trello.rxlifecycle2.LifecycleProvider;
-import com.u9porn.cookie.CookieManager;
 import com.u9porn.data.DataManager;
-import com.u9porn.data.model.User;
 import com.u9porn.data.network.Api;
 import com.u9porn.rxjava.CallBackWrapper;
 import com.u9porn.rxjava.RxSchedulersHelper;
 import com.u9porn.ui.MvpBasePresenter;
 import com.u9porn.ui.porn9video.search.SearchPresenter;
 import com.u9porn.utils.SDCardUtils;
-import com.u9porn.utils.UserHelper;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -184,6 +181,50 @@ public class SettingPresenter extends MvpBasePresenter<SettingView> implements I
     }
 
     @Override
+    public void testAxgle(String baseUrl, final QMUICommonListItemView qmuiCommonListItemView, final String key) {
+        RetrofitUrlManager.getInstance().putDomain(Api.AXGLE_DOMAIN_NAME, baseUrl);
+        dataManager.testAxgle()
+                .compose(RxSchedulersHelper.<Boolean>ioMainThread())
+                .compose(provider.<Boolean>bindToLifecycle())
+                .subscribe(new CallBackWrapper<Boolean>() {
+
+                    @Override
+                    public void onBegin(Disposable d) {
+                        ifViewAttached(new ViewAction<SettingView>() {
+                            @Override
+                            public void run(@NonNull SettingView view) {
+                                view.showTestingAddressDialog(true);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSuccess(final Boolean s) {
+                        ifViewAttached(new ViewAction<SettingView>() {
+                            @Override
+                            public void run(@NonNull SettingView view) {
+                                if (s) {
+                                    view.testNewAddressSuccess("测试成功", qmuiCommonListItemView, key);
+                                } else {
+                                    view.testNewAddressSuccess("测试失败，可以访问，但无法获取正确的数据", qmuiCommonListItemView, key);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(final String msg, int code) {
+                        ifViewAttached(new ViewAction<SettingView>() {
+                            @Override
+                            public void run(@NonNull SettingView view) {
+                                view.testNewAddressFailure(msg, qmuiCommonListItemView, key);
+                            }
+                        });
+                    }
+                });
+    }
+
+    @Override
     public boolean isHaveUnFinishDownloadVideo() {
         return dataManager.loadDownloadingData().size() != 0;
     }
@@ -192,7 +233,7 @@ public class SettingPresenter extends MvpBasePresenter<SettingView> implements I
     public boolean isHaveFinishDownloadVideoFile() {
         if (!TextUtils.isEmpty(dataManager.getCustomDownloadVideoDirPath())) {
             File file = new File(dataManager.getCustomDownloadVideoDirPath());
-            return file.listFiles().length != 0;
+            return file.listFiles() != null && file.listFiles().length != 0;
         }
         File file = new File(SDCardUtils.DOWNLOAD_VIDEO_PATH);
         //检查是否有MP4文件
@@ -346,5 +387,50 @@ public class SettingPresenter extends MvpBasePresenter<SettingView> implements I
     @Override
     public void setOpenSkipPage(boolean openSkipPage) {
         dataManager.setOpenSkipPage(openSkipPage);
+    }
+
+    @Override
+    public String getVideo9PornAddress() {
+        return dataManager.getPorn9VideoAddress();
+    }
+
+    @Override
+    public String getForum9PornAddress() {
+        return dataManager.getPorn9ForumAddress();
+    }
+
+    @Override
+    public String getPavAddress() {
+        return dataManager.getPavAddress();
+    }
+
+    @Override
+    public boolean isShowUrlRedirectTipDialog() {
+        return dataManager.isShowUrlRedirectTipDialog();
+    }
+
+    @Override
+    public void setShowUrlRedirectTipDialog(boolean showUrlRedirectTipDialog) {
+        dataManager.setShowUrlRedirectTipDialog(showUrlRedirectTipDialog);
+    }
+
+    @Override
+    public void setAxgleAddress(String address) {
+        dataManager.setAxgleAddress(address);
+    }
+
+    @Override
+    public String getAxgleAddress() {
+        return dataManager.getAxgleAddress();
+    }
+
+    @Override
+    public boolean isFixMainNavigation() {
+        return dataManager.isFixMainNavigation();
+    }
+
+    @Override
+    public void setFixMainNavigation(boolean fixMainNavigation) {
+        dataManager.setFixMainNavigation(fixMainNavigation);
     }
 }

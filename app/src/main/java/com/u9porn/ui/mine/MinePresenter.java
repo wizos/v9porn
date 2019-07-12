@@ -4,15 +4,12 @@ package com.u9porn.ui.mine;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 import com.u9porn.data.DataManager;
 import com.u9porn.data.model.User;
-import com.u9porn.di.PerActivity;
-import com.u9porn.utils.UserHelper;
 
 import javax.inject.Inject;
 
 /**
  * @author megoc
  */
-@PerActivity
 public class MinePresenter extends MvpBasePresenter<MineView> implements IMine {
 
     private DataManager dataManager;
@@ -70,5 +67,10 @@ public class MinePresenter extends MvpBasePresenter<MineView> implements IMine {
     @Override
     public int getSettingScrollViewScrollPosition() {
         return dataManager.getSettingScrollViewScrollPosition();
+    }
+
+    @Override
+    public boolean isFixMainNavigation() {
+        return dataManager.isFixMainNavigation();
     }
 }

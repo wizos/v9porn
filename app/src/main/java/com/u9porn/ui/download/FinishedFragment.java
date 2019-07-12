@@ -47,7 +47,6 @@ import butterknife.Unbinder;
  */
 public class FinishedFragment extends MvpFragment<DownloadView, DownloadPresenter> implements DownloadManager.DownloadStatusUpdater, DownloadView {
 
-
     @BindView(R.id.recyclerView_download_finish)
     RecyclerView recyclerView;
     Unbinder unbinder;
@@ -72,7 +71,6 @@ public class FinishedFragment extends MvpFragment<DownloadView, DownloadPresente
     @NonNull
     @Override
     public DownloadPresenter createPresenter() {
-        getActivityComponent().inject(this);
         return downloadPresenter;
     }
 
@@ -148,7 +146,7 @@ public class FinishedFragment extends MvpFragment<DownloadView, DownloadPresente
         if (file.exists()) {
             Uri uri;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                uri = FileProvider.getUriForFile(context.getApplicationContext(), "com.u91porn.fileprovider", file);
+                uri = FileProvider.getUriForFile(context, "com.u9porn.fileprovider", file);
             } else {
                 uri = Uri.fromFile(file);
             }

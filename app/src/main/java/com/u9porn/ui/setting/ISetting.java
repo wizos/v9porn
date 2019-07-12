@@ -15,6 +15,8 @@ public interface ISetting {
 
     void testPav(String baseUrl, QMUICommonListItemView qmuiCommonListItemView, String key);
 
+    void testAxgle(String baseUrl, QMUICommonListItemView qmuiCommonListItemView, String key);
+
     boolean isHaveUnFinishDownloadVideo();
 
     boolean isHaveFinishDownloadVideoFile();
@@ -50,4 +52,22 @@ public interface ISetting {
     boolean isOpenSkipPage();
 
     void setOpenSkipPage(boolean openSkipPage);
+
+    String getVideo9PornAddress();
+
+    String getForum9PornAddress();
+
+    String getPavAddress();
+
+    boolean isShowUrlRedirectTipDialog();
+
+    void setShowUrlRedirectTipDialog(boolean showUrlRedirectTipDialog);
+
+    void setAxgleAddress(String address);
+
+    String getAxgleAddress();
+
+    boolean isFixMainNavigation();
+
+    void setFixMainNavigation(boolean fixMainNavigation);
 }

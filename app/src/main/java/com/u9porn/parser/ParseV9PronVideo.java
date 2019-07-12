@@ -1,13 +1,14 @@
 package com.u9porn.parser;
 
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.orhanobut.logger.Logger;
-import com.u9porn.data.model.BaseResult;
 import com.u9porn.data.db.entity.V9PornItem;
+import com.u9porn.data.db.entity.VideoResult;
+import com.u9porn.data.model.BaseResult;
 import com.u9porn.data.model.User;
 import com.u9porn.data.model.VideoComment;
-import com.u9porn.data.db.entity.VideoResult;
 import com.u9porn.utils.StringUtils;
 
 import org.jsoup.Jsoup;
@@ -16,8 +17,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author flymegoc
@@ -208,8 +210,29 @@ public class ParseV9PronVideo {
             videoResult.setId(VideoResult.OUT_OF_WATCH_TIMES);
             return videoResult;
         }
-        Document doc = Jsoup.parse(html);
-        String videoUrl = doc.select("video").first().select("source").first().attr("src");
+
+
+        final String reg = "document.write\\(strencode\\(\"(.+)\",\"(.+)\",.+\\)\\);";
+        Pattern p = Pattern.compile(reg);
+        Matcher m = p.matcher(html);
+        String param1 = "", param2 = "";
+        if(m.find()){
+            param1 = m.group(1);
+            param2 = m.group(2);
+        }
+        param1 = new String(Base64.decode(param1.getBytes(),Base64.DEFAULT));
+        String source_str = "";
+        for (int i = 0,k=0; i<param1.length(); i++) {
+            k = i % param2.length();
+            source_str += ""+(char)(param1.codePointAt(i) ^ param2.codePointAt(k));
+        }
+        Logger.t(TAG).d("视频source1：" + source_str);
+        source_str = new String(Base64.decode(source_str.getBytes(),Base64.DEFAULT));
+        Logger.t(TAG).d("视频source2：" + source_str);
+
+//        String videoUrl = doc.select("video").first().select("source").first().attr("src");
+        Document source = Jsoup.parse(source_str);
+        String videoUrl = source.select("source").first().attr("src");
         videoResult.setVideoUrl(videoUrl);
         Logger.t(TAG).d("视频链接：" + videoUrl);
 
@@ -220,6 +243,7 @@ public class ParseV9PronVideo {
         Logger.t(TAG).d("视频Id：" + videoId);
 
         //这里解析的作者id已经变了，非纯数字了
+        Document doc = Jsoup.parse(html);
         String ownerUrl = doc.select("a[href*=UID]").first().attr("href");
         String ownerId = ownerUrl.substring(ownerUrl.indexOf("=") + 1, ownerUrl.length());
         videoResult.setOwnerId(ownerId);
@@ -271,7 +295,9 @@ public class ParseV9PronVideo {
         //新帐号注册成功登录后信息不一样，导致无法解析
         Element element = doc.getElementById("userinfo-title");
         if (element == null) {
-            return null;
+            user.setLogin(true);
+            user.setUserName("无法解析用户信息...");
+            return user;
         }
 
         //解析用户uid，2018年3月29日 似乎已经失效了,可在播放界面获取
@@ -285,7 +311,6 @@ public class ParseV9PronVideo {
         } else {
             Logger.t(TAG).d("无法解析用户uid");
         }
-
         String userInfoTitle = doc.getElementById("userinfo-title").text();
         String userName = StringUtils.subString(userInfoTitle, userInfoTitle.indexOf("欢迎") + 3, userInfoTitle.indexOf("用户状态"));
         Logger.t(TAG).d(userName);

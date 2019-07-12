@@ -1,7 +1,7 @@
 package com.u9porn.ui.porn9video.user;
 
 import android.arch.lifecycle.Lifecycle;
-import android.support.annotation.NonNull;
+import android.graphics.Bitmap;
 
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 import com.trello.rxlifecycle2.LifecycleProvider;
@@ -39,17 +39,14 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
 
     public void login(String username, String password, String captcha, final LoginListener loginListener) {
         dataManager.userLoginPorn9Video(username, password, captcha)
-                .compose(RxSchedulersHelper.<User>ioMainThread())
-                .compose(provider.<User>bindUntilEvent(Lifecycle.Event.ON_DESTROY))
+                .compose(RxSchedulersHelper.ioMainThread())
+                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
                 .subscribe(new CallBackWrapper<User>() {
                     @Override
                     public void onBegin(Disposable d) {
-                        ifViewAttached(new ViewAction<UserView>() {
-                            @Override
-                            public void run(@NonNull UserView view) {
-                                if (loginListener == null) {
-                                    view.showLoading(true);
-                                }
+                        ifViewAttached(view -> {
+                            if (loginListener == null) {
+                                view.showLoading(true);
                             }
                         });
                     }
@@ -60,12 +57,9 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
                         if (loginListener != null) {
                             loginListener.loginSuccess(user);
                         } else {
-                            ifViewAttached(new ViewAction<UserView>() {
-                                @Override
-                                public void run(@NonNull UserView view) {
-                                    view.showContent();
-                                    view.loginSuccess(user);
-                                }
+                            ifViewAttached(view -> {
+                                view.showContent();
+                                view.loginSuccess(user);
                             });
                         }
 
@@ -76,12 +70,9 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
                         if (loginListener != null) {
                             loginListener.loginFailure(msg);
                         } else {
-                            ifViewAttached(new ViewAction<UserView>() {
-                                @Override
-                                public void run(@NonNull UserView view) {
-                                    view.showContent();
-                                    view.loginError(msg);
-                                }
+                            ifViewAttached(view -> {
+                                view.showContent();
+                                view.loginError(msg);
                             });
                         }
                     }
@@ -91,39 +82,28 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
     @Override
     public void register(String username, String password1, String password2, String email, String captchaInput) {
         dataManager.userRegisterPorn9Video(username, password1, password2, email, captchaInput)
-                .compose(RxSchedulersHelper.<User>ioMainThread())
-                .compose(provider.<User>bindUntilEvent(Lifecycle.Event.ON_DESTROY))
+                .compose(RxSchedulersHelper.ioMainThread())
+                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
                 .subscribe(new CallBackWrapper<User>() {
                     @Override
                     public void onBegin(Disposable d) {
-                        ifViewAttached(new ViewAction<UserView>() {
-                            @Override
-                            public void run(@NonNull UserView view) {
-                                view.showLoading(true);
-                            }
-                        });
+                        ifViewAttached(view -> view.showLoading(true));
                     }
 
                     @Override
                     public void onSuccess(final User user) {
-                        ifViewAttached(new ViewAction<UserView>() {
-                            @Override
-                            public void run(@NonNull UserView view) {
-                                user.copyProperties(dataManager.getUser());
-                                view.showContent();
-                                view.registerSuccess(user);
-                            }
+                        ifViewAttached(view -> {
+                            user.copyProperties(dataManager.getUser());
+                            view.showContent();
+                            view.registerSuccess(user);
                         });
                     }
 
                     @Override
                     public void onError(final String msg, int code) {
-                        ifViewAttached(new ViewAction<UserView>() {
-                            @Override
-                            public void run(@NonNull UserView view) {
-                                view.showContent();
-                                view.registerFailure(msg);
-                            }
+                        ifViewAttached(view -> {
+                            view.showContent();
+                            view.registerFailure(msg);
                         });
                     }
                 });
@@ -157,6 +137,24 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
     }
 
     @Override
+    public void loadCaptcha() {
+        dataManager.porn9VideoLoginCaptcha()
+                .compose(RxSchedulersHelper.ioMainThread())
+                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_STOP))
+                .subscribe(new CallBackWrapper<Bitmap>() {
+                    @Override
+                    public void onSuccess(final Bitmap bitmap) {
+                        ifViewAttached(view -> view.loadCaptchaSuccess(bitmap));
+                    }
+
+                    @Override
+                    public void onError(final String msg, final int code) {
+                        ifViewAttached(view -> view.loadCaptchaFailure(msg, code));
+                    }
+                });
+    }
+
+    @Override
     public String getUserName() {
         return dataManager.getPorn9VideoLoginUserName();
     }
@@ -169,6 +167,11 @@ public class UserPresenter extends MvpBasePresenter<UserView> implements IUser {
     @Override
     public boolean isAutoLogin() {
         return dataManager.isPorn9VideoUserAutoLogin();
+    }
+
+    @Override
+    public String getVideo9PornAddress() {
+        return dataManager.getPorn9VideoAddress();
     }
 
     @Override

@@ -1,10 +1,11 @@
 {
-"apkDownloadUrl": "https://bitbucket.org/techGay/91porn/downloads/app-beta-v1.1.5.apk",
-"updateMessage": "主要修复两个问题\n
-                  1. 修复由于重构导致91视频打开需要会员的错误\n
-                  2. 修复论坛帖子打开错误问题\n
-                  3. 暂停HTTP代理设置
+"apkDownloadUrl": "https://raw.githubusercontent.com/techGay/v9porn/master/apk/v9porn-v1.1.2.apk",
+"updateMessage": "
+1. 修复因升级targetSdkVersion28导致的下载以及浏览论坛崩溃问题\n
+2. 现在不登录也能无限制观看作者其他的视频\n
+3. 其他改动调整及bug修复\n
+注意：无法自动更新或者9.0以上系统需要手动下载apk升级
 ",
-"versionCode": 1,
-"versionName": "1.0.0"
+"versionCode": 13,
+"versionName": "1.1.2"
 }

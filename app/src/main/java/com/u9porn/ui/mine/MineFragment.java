@@ -14,25 +14,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.u9porn.R;
+import com.u9porn.constants.Constants;
+import com.u9porn.constants.Keys;
+import com.u9porn.constants.KeysActivityRequestResultCode;
 import com.u9porn.data.model.User;
 import com.u9porn.ui.MvpFragment;
 import com.u9porn.ui.about.AboutActivity;
 import com.u9porn.ui.download.DownloadActivity;
+import com.u9porn.ui.main.MainActivity;
 import com.u9porn.ui.porn9video.favorite.FavoriteActivity;
 import com.u9porn.ui.porn9video.history.HistoryActivity;
-import com.u9porn.ui.main.MainActivity;
+import com.u9porn.ui.porn9video.user.UserLoginActivity;
 import com.u9porn.ui.proxy.ProxySettingActivity;
 import com.u9porn.ui.setting.SettingActivity;
-import com.u9porn.ui.porn9video.user.UserLoginActivity;
 import com.u9porn.utils.UserHelper;
-import com.u9porn.constants.Constants;
-import com.u9porn.constants.Keys;
 import com.u9porn.widget.ObservableScrollView;
 
 import javax.inject.Inject;
@@ -64,6 +68,9 @@ public class MineFragment extends MvpFragment<MineView, MinePresenter> implement
     ImageView imageView;
     @BindView(R.id.ov_setting_wrapper)
     ObservableScrollView observableScrollView;
+    @BindView(R.id.root_layout)
+    RelativeLayout rootRelativeLayout;
+
     private String myFavoriteStr;
     private String proxyStr;
     public String myDownloadStr;
@@ -90,7 +97,6 @@ public class MineFragment extends MvpFragment<MineView, MinePresenter> implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivityComponent().inject(this);
     }
 
     @Override
@@ -104,7 +110,6 @@ public class MineFragment extends MvpFragment<MineView, MinePresenter> implement
     @NonNull
     @Override
     public MinePresenter createPresenter() {
-        getActivityComponent().inject(this);
         return minePresenter;
     }
 
@@ -130,6 +135,16 @@ public class MineFragment extends MvpFragment<MineView, MinePresenter> implement
             }
         }, 200);
         initMineSection();
+        handlerMargin();
+    }
+
+    private void handlerMargin() {
+        if (presenter.isFixMainNavigation()) {
+            return;
+        }
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) rootRelativeLayout.getLayoutParams();
+        layoutParams.bottomMargin = QMUIDisplayHelper.getActionBarHeight(context);
+        rootRelativeLayout.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -319,7 +334,7 @@ public class MineFragment extends MvpFragment<MineView, MinePresenter> implement
         if (content.equals(myFavoriteStr)) {
             if (!presenter.isUserLogin()) {
                 Intent intent = new Intent(context, UserLoginActivity.class);
-                intent.putExtra(Keys.KEY_INTENT_LOGIN_FOR_ACTION, UserLoginActivity.LOGIN_ACTION_FOR_LOOK_MY_FAVORITE);
+                intent.putExtra(Keys.KEY_INTENT_LOGIN_FOR_ACTION, KeysActivityRequestResultCode.LOGIN_ACTION_FOR_LOOK_MY_FAVORITE);
                 startActivityForResultWithAnimation(intent, Constants.USER_LOGIN_REQUEST_CODE);
                 return;
             }
