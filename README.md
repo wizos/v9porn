@@ -52,8 +52,11 @@ rxjava + retrofit + rxcache + mvp + jsoup + dagger2
 **注意：v1.0.1以下版本需要手动下载apk并卸载重新安装，否则程序崩溃且下版本无法自动更新（之前项目老版本需卸载重装）**
 [更多更新日志...](https://github.com/techGay/v9porn/blob/master/UPGRADE_LOG.md)
 
+<<<<<<< HEAD
 ### 特别注意
 网站使用了cdn加速，而cdn加速里有防机器人验证，所以可能会因为你的网络问题或者梯子问题导致触发google的机器人验证或者403阻止访问，目前没有好的解决办法，如果出现你只能等恢复或者更换其他的网络或者使用网页直接打开
+=======
+>>>>>>> c291963f4b888b050d458a07aced86e1b86d8178
 
 ### 安装包APK下载
 
