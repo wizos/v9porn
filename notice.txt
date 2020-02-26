@@ -1,9 +1,9 @@
 {
   "noticeMessage": "
-    项目已停止维护，源码暂时保留。
+    当前v1.0.9无法登录9*porn的，请卸载重装（如果已自动升级过，则升级的安装包在Download目录下，否则请手动下载安装）。
   ",
-  "noticeTime": "2019年07月09日",
+  "noticeTime": "2019年01月13日",
    "noticeTitle": "公告",
    "noticeer": "Adimn",
-   "versionCode": 5
+   "versionCode": 4
  }
