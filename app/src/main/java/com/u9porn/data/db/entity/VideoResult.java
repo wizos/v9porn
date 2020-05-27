@@ -53,10 +53,13 @@ public class VideoResult implements Serializable {
     private String addDate;
     private String userOtherInfo;
 
-    @Generated(hash = 1158187111)
+    private String uvId;
+    private int uid;
+
+    @Generated(hash = 1557299270)
     public VideoResult(Long id, String videoUrl, String videoId, String ownerId, String authorId,
             String thumbImgUrl, String videoName, String ownerName, String addDate,
-            String userOtherInfo) {
+            String userOtherInfo, String uvId, int uid) {
         this.id = id;
         this.videoUrl = videoUrl;
         this.videoId = videoId;
@@ -67,6 +70,8 @@ public class VideoResult implements Serializable {
         this.ownerName = ownerName;
         this.addDate = addDate;
         this.userOtherInfo = userOtherInfo;
+        this.uvId = uvId;
+        this.uid = uid;
     }
 
     @Generated(hash = 121136283)
@@ -186,5 +191,21 @@ public class VideoResult implements Serializable {
                 ", addDate='" + addDate + '\'' +
                 ", userOtherInfo='" + userOtherInfo + '\'' +
                 '}';
+    }
+
+    public String getUvId() {
+        return uvId;
+    }
+
+    public void setUvId(String uvId) {
+        this.uvId = uvId;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }
