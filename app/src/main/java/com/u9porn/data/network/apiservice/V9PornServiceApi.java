@@ -135,18 +135,15 @@ public interface V9PornServiceApi {
 
     /**
      * 收藏视频
-     *
-     * @param cpaintFunction 动作
-     * @param uId            用户id
-     * @param videoId        视频id
-     * @param ownerId        视频发布者id
-     * @param responseType   返回类型
      * @return ob
      */
+    //@Headers({"Domain-Name: " + Api.PORN9_VIDEO_DOMAIN_NAME})
+    //@GET("/ajax/myajaxphp.php")
+    //Observable<String> favoriteVideo(@Query("cpaint_function") String cpaintFunction, @Query("cpaint_argument[]") String uId, @Query("cpaint_argument[]") String videoId, @Query("cpaint_argument[]") String ownerId, @Query("cpaint_response_type") String responseType, @Header("Referer") String referer);
     @Headers({"Domain-Name: " + Api.PORN9_VIDEO_DOMAIN_NAME})
-    @GET("/ajax/myajaxphp.php")
-    Observable<String> favoriteVideo(@Query("cpaint_function") String cpaintFunction, @Query("cpaint_argument[]") String uId, @Query("cpaint_argument[]") String videoId, @Query("cpaint_argument[]") String ownerId, @Query("cpaint_response_type") String responseType, @Header("Referer") String referer);
-
+    @GET("/add_favorite.php")
+    //@FormUrlEncoded
+    Observable<String> favoriteVideo(@Query("VID")String VID,@Query("UID") String UID,@Query("VUID") String VUID,@Header("Referer") String referer);
     /**
      * //xxxxxxxxxxx/show_comments2.php?VID=247965&start=1&comment_per_page=20
      * 获取视频评论

@@ -100,6 +100,7 @@ public class AppApiHelper implements ApiHelper {
     private Gson gson;
     private User user;
     private final VideoPlayUrlParser videoPlayUrlParser;
+
     @Inject
     public AppApiHelper(CacheProviders cacheProviders, V9PornServiceApi v9PornServiceApi, Forum9PronServiceApi forum9PronServiceApi, GitHubServiceApi gitHubServiceApi, MeiZiTuServiceApi meiZiTuServiceApi, Mm99ServiceApi mm99ServiceApi, PavServiceApi pavServiceApi, ProxyServiceApi proxyServiceApi, HuaBanServiceApi huaBanServiceApi, AxgleServiceApi axgleServiceApi, AddressHelper addressHelper, Gson gson, MyProxySelector myProxySelector, User user, VideoPlayUrlParser videoPlayUrlParser) {
         this.cacheProviders = cacheProviders;
@@ -193,7 +194,7 @@ public class AppApiHelper implements ApiHelper {
         String ip = addressHelper.getRandomIPAddress();
         //因为登录后不在返回用户uid，需要在此页面获取，所以当前页面不在缓存，确保用户登录后刷新当前页面可以获取到用户uid
         return v9PornServiceApi.getVideoPlayPage(viewKey, ip, HeaderUtils.getIndexHeader(addressHelper))
-                .map(html -> videoPlayUrlParser.parseVideoPlayUrl(html,user));
+                .map(html -> videoPlayUrlParser.parseVideoPlayUrl(html, user));
     }
 
     @Override
@@ -233,30 +234,45 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Observable<String> favoritePorn9Video(String uId, String videoId, String ownnerId) {
+    public Observable<String> favoritePorn9Video(String uId, String videoId, String uvid) {
         String cpaintFunction = "addToFavorites";
         String responseType = "json";
-        return v9PornServiceApi.favoriteVideo(cpaintFunction, uId, videoId, ownnerId, responseType, HeaderUtils.getIndexHeader(addressHelper))
-                .map(s -> {
-                    Logger.t(TAG).d("favoriteStr: " + s);
-                    return new Gson().fromJson(s, FavoriteJsonResult.class);
-                })
-                .map(favoriteJsonResult -> favoriteJsonResult.getAddFavMessage().get(0).getData())
-                .map(code -> {
-                    String msg;
-                    switch (code) {
-                        case FavoriteJsonResult.FAVORITE_SUCCESS:
-                            msg = "收藏成功";
-                            break;
-                        case FavoriteJsonResult.FAVORITE_FAIL:
-                            throw new FavoriteException("收藏失败");
-                        case FavoriteJsonResult.FAVORITE_YOURSELF:
-                            throw new FavoriteException("不能收藏自己的视频");
-                        default:
-                            throw new FavoriteException("收藏失败");
-                    }
-                    return msg;
-                });
+//        return v9PornServiceApi.favoriteVideo(cpaintFunction, uId, videoId, uvid, responseType, HeaderUtils.getIndexHeader(addressHelper))
+//                .map(s -> {
+//                    Logger.t(TAG).d("favoriteStr: " + s);
+//                    return new Gson().fromJson(s, FavoriteJsonResult.class);
+//                })
+//                .map(favoriteJsonResult -> favoriteJsonResult.getAddFavMessage().get(0).getData())
+//                .map(code -> {
+//                    String msg;
+//                    switch (code) {
+//                        case FavoriteJsonResult.FAVORITE_SUCCESS:
+//                            msg = "收藏成功";
+//                            break;
+//                        case FavoriteJsonResult.FAVORITE_FAIL:
+//                            throw new FavoriteException("收藏失败");
+//                        case FavoriteJsonResult.FAVORITE_YOURSELF:
+//                            throw new FavoriteException("不能收藏自己的视频");
+//                        default:
+//                            throw new FavoriteException("收藏失败");
+//                    }
+//                    return msg;
+//                });
+        return v9PornServiceApi.favoriteVideo(videoId, uId, uvid,HeaderUtils.getIndexHeader(addressHelper)).map(code -> {
+            String msg;
+            switch (Integer.parseInt(code)) {
+                case FavoriteJsonResult.FAVORITE_SUCCESS:
+                    msg = "收藏成功";
+                    break;
+                case FavoriteJsonResult.FAVORITE_FAIL:
+                    throw new FavoriteException("收藏失败");
+                case FavoriteJsonResult.FAVORITE_YOURSELF:
+                    throw new FavoriteException("不能收藏自己的视频");
+                default:
+                    throw new FavoriteException("收藏失败");
+            }
+            return msg;
+        });
     }
 
     @Override
