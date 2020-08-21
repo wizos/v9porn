@@ -438,8 +438,9 @@ public class ParseV9PronVideo {
         //总页数
         //Element pagingnav = body.getElementById("paging");
         Elements a = doc.select("div[class=pagingnav]");
-        if (a.size() >= 2) {
-            String ppp = a.get(a.size() - 2).text();
+        //Bug Fix:解决收藏页面只能解析出来第一页的收藏数据的bug
+        if(a!=null&&a.size()>0){
+            String ppp=a.select("a").get(0).text();
             if (TextUtils.isDigitsOnly(ppp)) {
                 totalPage = Integer.parseInt(ppp);
                 Logger.d("总页数：" + totalPage);
