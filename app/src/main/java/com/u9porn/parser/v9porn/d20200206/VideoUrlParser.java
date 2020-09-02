@@ -35,15 +35,16 @@ public class VideoUrlParser extends BaseVideoPlayUrlParser implements VideoPlayU
         videoResult.setVideoId(videoId);
         Logger.t(TAG).d("视频Id：" + videoId);
 
-        Element jsElement=element.select("script").first();
-        String jsTagString=jsElement.toString();
-        String jsScriptVideoUrl=jsTagString.substring(jsTagString.indexOf("strencode"),jsTagString.indexOf(");"));
+        //Element jsElement=element.select("script").first();
+        //String jsTagString=jsElement.toString();
+        //String jsScriptVideoUrl=jsTagString.substring(jsTagString.indexOf("strencode"),jsTagString.indexOf(");"));
 
         /**
          * element.select("script").toString().substring(element.select("script").toString().indexOf("strencode"),element.select("script").toString().indexOf(");"))
          */
-
-        videoResult.setVideoUrl(jsScriptVideoUrl);
+        String videoUrl=element.select("source").attr("src");
+        videoResult.setVideoUrl(videoUrl.replace("//","/").replace("https:/","https://"));
+        Logger.t(TAG).d("视频Url：" + videoUrl);
 //        String videoUrl = element.selectFirst("source").attr("src");
 //        videoResult.setVideoUrl(videoUrl);
 //        int startIndex = videoUrl.lastIndexOf("/");

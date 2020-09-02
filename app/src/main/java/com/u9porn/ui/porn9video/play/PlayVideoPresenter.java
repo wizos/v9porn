@@ -86,12 +86,13 @@ public class PlayVideoPresenter extends MvpBasePresenter<PlayVideoView> implemen
                     @Override
                     public void onSuccess(final VideoResult videoResult) {
                         dataManager.resetPorn91VideoWatchTime(false);
-                        MyApplication.getInstance().getWebView().evaluateJavascript(videoResult.getVideoUrl(), value -> {
-                            Logger.t(TAG).d(value);
-                            String tempViedeoUrl = value.substring(value.indexOf("http"), value.indexOf("type") - 2);
-                            videoResult.setVideoUrl(tempViedeoUrl);
-                            ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
-                        });
+//                        MyApplication.getInstance().getWebView().evaluateJavascript(videoResult.getVideoUrl(), value -> {
+//                            Logger.t(TAG).d(value);
+//                            String tempViedeoUrl = value.substring(value.indexOf("http"), value.indexOf("type") - 2);
+//                            videoResult.setVideoUrl(tempViedeoUrl);
+//                            ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
+//                        });
+                        ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
                         if(videoResult.getUid()!=0){
                             dataManager.getUser().setUserId(videoResult.getUid());
                         }
