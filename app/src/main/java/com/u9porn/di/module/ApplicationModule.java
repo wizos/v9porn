@@ -3,6 +3,7 @@ package com.u9porn.di.module;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -157,11 +158,20 @@ public abstract class ApplicationModule {
         mWebSettings.setUseWideViewPort(true);
         mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
-        mWebView.loadUrl("file:///android_asset/web/index.html"); //js文件路径
+        //mWebView.loadUrl("file:///android_asset/web/index.html"); //js文件路径
         mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 Logger.t(TAG).d("加载完成..:" + url);
+                view.loadUrl("javascript:window.local_obj.showSource('<head>'+" +
+                        "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                super.onPageFinished(view, url);
             }
         });
         return mWebView;
