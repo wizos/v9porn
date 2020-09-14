@@ -2,6 +2,8 @@ package com.u9porn.ui.porn9video.play;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -26,6 +28,7 @@ import com.u9porn.ui.porn9video.favorite.FavoritePresenter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +65,19 @@ public class PlayVideoPresenter extends MvpBasePresenter<PlayVideoView> implemen
         }
     }
 
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what==0){
+                V9PornItem v9PornItem=(V9PornItem)msg.obj;
+                ifViewAttached(view -> view.parseVideoUrlSuccess(v9PornItem));
+            }
+            else if(msg.what==1){
+                ifViewAttached(view -> view.errorParseVideoUrl("解析视频链接失败了"));
+            }
+        }
+    };
+
 //    private final WebView webView;
 
     @Inject
@@ -76,115 +92,91 @@ public class PlayVideoPresenter extends MvpBasePresenter<PlayVideoView> implemen
     @Override
     public void loadVideoUrl(final V9PornItem v9PornItem) {
         String viewKey = v9PornItem.getViewKey();
-//        dataManager.loadPorn9VideoUrl(viewKey)
-//                .map(videoResult -> {
-//                    if (TextUtils.isEmpty(videoResult.getVideoUrl())) {
-//                        if (VideoResult.OUT_OF_WATCH_TIMES.equals(videoResult.getId())) {
-//                            //尝试强行重置，并上报异常
-//                            dataManager.resetPorn91VideoWatchTime(true);
-//                            // Bugsnag.notify(new Throwable(TAG + "Ten videos each day address: " + dataManager.getPorn9VideoAddress()), Severity.WARNING);
-//                            throw new VideoException("观看次数达到上限了,请更换地址或者代理服务器！");
-//                        } else if (VideoResult.VIDEO_NOT_EXIST_OR_DELETE.equals(videoResult.getId())) {
-//                            throw new VideoException("视频不存在,可能已经被删除或者被举报为不良内容!");
-//                        } else {
-//                            throw new VideoException("解析视频链接失败了");
-//                        }
-//                    }
-//                    return videoResult;
-//                })
-//                .retryWhen(new RetryWhenProcess(RetryWhenProcess.PROCESS_TIME))
-//                .compose(RxSchedulersHelper.ioMainThread())
-//                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
-//                .subscribe(new CallBackWrapper<VideoResult>() {
-//                    @Override
-//                    public void onBegin(Disposable d) {
-//                        ifViewAttached(PlayVideoView::showParsingDialog);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(final VideoResult videoResult) {
-//                        dataManager.resetPorn91VideoWatchTime(false);
-//                        MyApplication.getInstance().getWebView().evaluateJavascript(videoResult.getVideoUrl(), value -> {
-//                            Logger.t(TAG).d(value);
-//                            String tempViedeoUrl = value.substring(value.indexOf("http"), value.indexOf("type") - 2);
-//                            videoResult.setVideoUrl(tempViedeoUrl);
-//                            ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
-//                        });
-//                        MyApplication.getInstance().getWebView()
-//                        Api.APP_GITHUB_DOMAIN
-//
-//
-//
-////                        ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
-////                        if(videoResult.getUid()!=0){
-////                            dataManager.getUser().setUserId(videoResult.getUid());
-////                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(final String msg, int code) {
-//                        ifViewAttached(view -> view.errorParseVideoUrl(msg));
-//                    }
-//                });
+        dataManager.loadPorn9VideoUrl(viewKey)
+                .map(videoResult -> {
+                    if (TextUtils.isEmpty(videoResult.getVideoUrl())) {
+                        if (VideoResult.OUT_OF_WATCH_TIMES.equals(videoResult.getId())) {
+                            //尝试强行重置，并上报异常
+                            dataManager.resetPorn91VideoWatchTime(true);
+                            // Bugsnag.notify(new Throwable(TAG + "Ten videos each day address: " + dataManager.getPorn9VideoAddress()), Severity.WARNING);
+                            throw new VideoException("观看次数达到上限了,请更换地址或者代理服务器！");
+                        } else if (VideoResult.VIDEO_NOT_EXIST_OR_DELETE.equals(videoResult.getId())) {
+                            throw new VideoException("视频不存在,可能已经被删除或者被举报为不良内容!");
+                        } else {
+                            throw new VideoException("解析视频链接失败了");
+                        }
+                    }
+                    return videoResult;
+                })
+                .retryWhen(new RetryWhenProcess(RetryWhenProcess.PROCESS_TIME))
+                .compose(RxSchedulersHelper.ioMainThread())
+                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
+                .subscribe(new CallBackWrapper<VideoResult>() {
+                    @Override
+                    public void onBegin(Disposable d) {
+                        ifViewAttached(PlayVideoView::showParsingDialog);
+                    }
 
-
-
-        MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj() {
-            @JavascriptInterface
-            @Override
-            public void showSource(String html) {
-                //String response = html;
-                Observable.just(html).map(response->)
-                        .compose(RxSchedulersHelper.ioMainThread())
-                        .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
-                        .subscribe(new CallBackWrapper<VideoResult>(){
+                    @Override
+                    public void onSuccess(final VideoResult videoResult) {
+                        dataManager.resetPorn91VideoWatchTime(false);
+                        String ip = MyApplication.getInstance().getAddressHelper().getRandomIPAddress();
+                        Map<String, String > headers = new HashMap<String, String>();
+                        headers.put("X-Forwarded-For",ip);
+                        headers.put("Referer", HeaderUtils.getIndexHeader(MyApplication.getInstance().getAddressHelper()));
+                        MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj(){
+                            @JavascriptInterface
                             @Override
-                            public void onSuccess(VideoResult videoResult) {
-
+                            public void showSource(String html) {
+                                Logger.t(TAG).d(videoResult);
+                                boolean isParseSuccess=parseViedoUrl(videoResult,html);
+                                if(isParseSuccess){
+                                    V9PornItem v9PornItem1=saveVideoUrl(videoResult, v9PornItem);
+                                    if (videoResult.getUid() != 0) {
+                                        dataManager.getUser().setUserId(videoResult.getUid());
+                                    }
+                                    Message msg=Message.obtain();
+                                    msg.what=0;
+                                    msg.obj=v9PornItem1;
+                                    mHandler.sendMessage(msg);
+                                }
+                                else{
+                                    Message msg=Message.obtain();
+                                    msg.what=1;
+                                    mHandler.sendMessage(msg);
+                                }
                             }
+                        },"local_obj");
+                        MyApplication.getInstance().getWebView().loadUrl(MyApplication.getInstance().getAddressHelper().getVideo9PornAddress()+"view_video.php"+"?viewkey="+viewKey);
+                    }
 
-                            @Override
-                            public void onError(String msg, int code) {
+                    @Override
+                    public void onError(final String msg, int code) {
+                        ifViewAttached(view -> view.errorParseVideoUrl(msg));
+                    }
+                });
+    }
 
-                            }
-                        });
+    private boolean parseViedoUrl(VideoResult videoResult,String html){
+        if(TextUtils.isEmpty(html)){
+            return false;
+        }
+        else{
+            Document document = Jsoup.parse(html);
+            Element element = document.getElementById("player_one");
+            if(element==null){
+                return false;
             }
-        }, "local_obj");
-
-
-        //MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj(), "local_obj");
-        String ip = MyApplication.getInstance().getAddressHelper().getRandomIPAddress();
-        Map<String, String > headers = new HashMap<String, String>();
-        headers.put("X-Forwarded-For",ip);
-        headers.put("Referer", HeaderUtils.getIndexHeader(MyApplication.getInstance().getAddressHelper()));
-        MyApplication.getInstance().getWebView().loadUrl(MyApplication.getInstance().getAddressHelper().getVideo9PornAddress()+"view_video.php"+"?viewkey="+viewKey);
-//        Observable.create(new ObservableOnSubscribe<String>() {
-//            @SuppressLint("JavascriptInterface")
-//            @Override
-//            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-//                MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj() {
-//                    @Override
-//                    public void showSource(String html) {
-//                        String response = html;
-//                    }
-//                }, "local_obj");
-//                MyApplication.getInstance().getWebView().loadUrl("http://www.cnblogs.com/hibraincol/");
-//            }
-//        })
-//                .retryWhen(new RetryWhenProcess(RetryWhenProcess.PROCESS_TIME))
-//                .compose(RxSchedulersHelper.ioMainThread())
-//                .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
-//                .subscribe(new CallBackWrapper<String>() {
-//                    @Override
-//                    public void onSuccess(String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String msg, int code) {
-//
-//                    }
-//                });
+            if(element.getElementById("player_one_html5_api")==null){
+                return false;
+            }
+            String videoUrl=element.getElementById("player_one_html5_api").attr("src");
+            if(TextUtils.isEmpty(videoUrl)){
+                return false;
+            }
+            videoResult.setVideoUrl(videoUrl);
+            return true;
+        }
     }
 
     /**

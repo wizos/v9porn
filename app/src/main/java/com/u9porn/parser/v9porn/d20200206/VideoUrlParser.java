@@ -42,10 +42,10 @@ public class VideoUrlParser extends BaseVideoPlayUrlParser implements VideoPlayU
         /**
          * element.select("script").toString().substring(element.select("script").toString().indexOf("strencode"),element.select("script").toString().indexOf(");"))
          */
-        String videoUrl=element.select("source").attr("src");
+        //String videoUrl=element.select("source").attr("src");
         //videoResult.setVideoUrl(videoUrl.replace("//","/").replace(":/","://"));
-        videoResult.setVideoUrl(videoUrl);
-        Logger.t(TAG).d("视频Url：" + videoResult.getVideoUrl());
+        videoResult.setVideoUrl("empty url");
+        //Logger.t(TAG).d("视频Url：" + videoResult.getVideoUrl());
 //        String videoUrl = element.selectFirst("source").attr("src");
 //        videoResult.setVideoUrl(videoUrl);
 //        int startIndex = videoUrl.lastIndexOf("/");
