@@ -1,5 +1,7 @@
 package com.u9porn.parser.v9porn.d20200206;
 
+import android.text.TextUtils;
+
 import com.orhanobut.logger.Logger;
 import com.u9porn.data.db.entity.VideoResult;
 import com.u9porn.data.model.User;
@@ -43,9 +45,14 @@ public class VideoUrlParser extends BaseVideoPlayUrlParser implements VideoPlayU
          * element.select("script").toString().substring(element.select("script").toString().indexOf("strencode"),element.select("script").toString().indexOf(");"))
          */
         //String videoUrl=element.select("source").attr("src");
-        //videoResult.setVideoUrl(videoUrl.replace("//","/").replace(":/","://"));
-        videoResult.setVideoUrl("empty url");
-        //Logger.t(TAG).d("视频Url：" + videoResult.getVideoUrl());
+        Element playerOneHtml5=element.getElementById("player_one_html5_api");
+        if(playerOneHtml5!=null){
+            String videoUrl=playerOneHtml5.attr("src");
+            if(!TextUtils.isEmpty(videoUrl)){
+                videoResult.setVideoUrl(videoUrl);
+            }
+        }
+        Logger.t(TAG).d("视频Url：" + videoResult.getVideoUrl());
 //        String videoUrl = element.selectFirst("source").attr("src");
 //        videoResult.setVideoUrl(videoUrl);
 //        int startIndex = videoUrl.lastIndexOf("/");

@@ -1,9 +1,11 @@
 package com.u9porn.ui.porn9video.play;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.arch.lifecycle.Lifecycle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -29,18 +31,24 @@ import com.u9porn.ui.porn9video.favorite.FavoritePresenter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.internal.operators.observable.ObservableFromCallable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author flymegoc
@@ -109,7 +117,8 @@ public class PlayVideoPresenter extends MvpBasePresenter<PlayVideoView> implemen
                     return videoResult;
                 })
                 .retryWhen(new RetryWhenProcess(RetryWhenProcess.PROCESS_TIME))
-                .compose(RxSchedulersHelper.ioMainThread())
+                //.compose(RxSchedulersHelper.ioMainThread())
+                .subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread())
                 .compose(provider.bindUntilEvent(Lifecycle.Event.ON_DESTROY))
                 .subscribe(new CallBackWrapper<VideoResult>() {
                     @Override
@@ -120,34 +129,10 @@ public class PlayVideoPresenter extends MvpBasePresenter<PlayVideoView> implemen
                     @Override
                     public void onSuccess(final VideoResult videoResult) {
                         dataManager.resetPorn91VideoWatchTime(false);
-                        String ip = MyApplication.getInstance().getAddressHelper().getRandomIPAddress();
-                        Map<String, String > headers = new HashMap<String, String>();
-                        headers.put("X-Forwarded-For",ip);
-                        headers.put("Referer", HeaderUtils.getIndexHeader(MyApplication.getInstance().getAddressHelper()));
-                        MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj(){
-                            @JavascriptInterface
-                            @Override
-                            public void showSource(String html) {
-                                Logger.t(TAG).d(videoResult);
-                                boolean isParseSuccess=parseViedoUrl(videoResult,html);
-                                if(isParseSuccess){
-                                    V9PornItem v9PornItem1=saveVideoUrl(videoResult, v9PornItem);
-                                    if (videoResult.getUid() != 0) {
-                                        dataManager.getUser().setUserId(videoResult.getUid());
-                                    }
-                                    Message msg=Message.obtain();
-                                    msg.what=0;
-                                    msg.obj=v9PornItem1;
-                                    mHandler.sendMessage(msg);
-                                }
-                                else{
-                                    Message msg=Message.obtain();
-                                    msg.what=1;
-                                    mHandler.sendMessage(msg);
-                                }
-                            }
-                        },"local_obj");
-                        MyApplication.getInstance().getWebView().loadUrl(MyApplication.getInstance().getAddressHelper().getVideo9PornAddress()+"view_video.php"+"?viewkey="+viewKey);
+                        ifViewAttached(view -> view.parseVideoUrlSuccess(saveVideoUrl(videoResult, v9PornItem)));
+                        if(videoResult.getUid()!=0){
+                            dataManager.getUser().setUserId(videoResult.getUid());
+                        }
                     }
 
                     @Override
