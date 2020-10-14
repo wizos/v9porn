@@ -9,8 +9,8 @@ android {
         applicationId "com.u9porn"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode 16
-        versionName "1.1.5"
+        versionCode 19
+        versionName "1.1.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -41,7 +41,7 @@ android {
 }
 
 greendao {
-    schemaVersion 4//数据库版本号
+    schemaVersion 5//数据库版本号
 }
 
 bugly {

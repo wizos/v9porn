@@ -1,12 +1,17 @@
 package com.u9porn.di.module;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.headers.HeaderInjector;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.orhanobut.logger.Logger;
 import com.u9porn.constants.Constants;
 import com.u9porn.cookie.AppCookieManager;
 import com.u9porn.cookie.CookieManager;
@@ -23,7 +28,8 @@ import com.u9porn.di.ApplicationContext;
 import com.u9porn.di.DatabaseInfo;
 import com.u9porn.di.PreferenceInfo;
 import com.u9porn.parser.v9porn.VideoPlayUrlParser;
-import com.u9porn.parser.v9porn.d20200206.VideoUrlParser;
+
+import com.u9porn.parser.v9porn.d20201009.VideoUrlParser;
 import com.u9porn.utils.AddressHelper;
 import com.u9porn.utils.AppCacheUtils;
 import com.u9porn.utils.MyHeaderInjector;
@@ -138,27 +144,38 @@ public abstract class ApplicationModule {
         return appCookieManager;
     }
 
-//    @SuppressLint("SetJavaScriptEnabled")
-//    @Provides
-//    @Singleton
-//    static WebView providesWebView(@ApplicationContext Context context){
-//        Logger.t(TAG).d("初始化");
-//        WebView mWebView = new WebView(context);
-//
-//        WebSettings mWebSettings = mWebView.getSettings();
-//
-//        //启用JavaScript。
-//        mWebSettings.setJavaScriptEnabled(true);
-//        mWebSettings.setUseWideViewPort(true);
-//        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-//
-//        mWebView.loadUrl("file:///android_asset/web/index.html"); //js文件路径
-//        mWebView.setWebViewClient(new WebViewClient() {
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                Logger.t(TAG).d("加载完成..:" + url);
-//            }
-//        });
-//        return mWebView;
-//    }
+    @SuppressLint("SetJavaScriptEnabled")
+    @Provides
+    @Singleton
+    static WebView providesWebView(@ApplicationContext Context context){
+        Logger.t(TAG).d("初始化");
+        WebView mWebView = new WebView(context);
+
+        WebSettings mWebSettings = mWebView.getSettings();
+
+        //启用JavaScript。
+        mWebSettings.setJavaScriptEnabled(true);
+        mWebSettings.setUseWideViewPort(true);
+        mWebSettings.setLoadsImagesAutomatically(false);
+        mWebSettings.setBlockNetworkImage(true);
+        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+        //mWebView.loadUrl("file:///android_asset/web/index.html"); //js文件路径
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Logger.t(TAG).d("加载完成..:" + url);
+                view.loadUrl("javascript:window.local_obj.showSource('<head>'+" +
+                        "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                super.onPageFinished(view, url);
+            }
+        });
+        return mWebView;
+    }
 }

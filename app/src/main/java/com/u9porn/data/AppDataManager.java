@@ -186,8 +186,8 @@ public class AppDataManager implements DataManager {
     }
 
     @Override
-    public Observable<String> favoritePorn9Video(String uId, String videoId, String ownnerId) {
-        return mApiHelper.favoritePorn9Video(uId, videoId, ownnerId);
+    public Observable<String> favoritePorn9Video(String uId, String videoId, String uvid) {
+        return mApiHelper.favoritePorn9Video(uId, videoId, uvid);
     }
 
     @Override

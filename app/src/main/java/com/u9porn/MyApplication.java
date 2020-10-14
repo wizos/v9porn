@@ -3,6 +3,7 @@ package com.u9porn;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
+import android.webkit.WebView;
 
 import com.helper.loadviewhelper.load.LoadViewHelper;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -11,6 +12,7 @@ import com.tencent.bugly.crashreport.CrashReport;
 import com.u9porn.data.DataManager;
 import com.u9porn.di.component.DaggerAppComponent;
 import com.u9porn.eventbus.LowMemoryEvent;
+import com.u9porn.utils.AddressHelper;
 import com.u9porn.utils.AppLogger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +36,10 @@ public class MyApplication extends DaggerApplication {
 
     @Inject
     DataManager dataManager;
+    @Inject
+    WebView mWebView;
+    @Inject
+    AddressHelper addressHelper;
 
     private static MyApplication myApplication;
 
@@ -109,6 +115,13 @@ public class MyApplication extends DaggerApplication {
         return dataManager;
     }
 
+    public WebView getWebView(){
+        return mWebView;
+    }
+
+    public AddressHelper getAddressHelper(){
+        return addressHelper;
+    }
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         return DaggerAppComponent.builder().application(this).build();

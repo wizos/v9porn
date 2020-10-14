@@ -3,9 +3,11 @@ package com.u9porn.data.network;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
+import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
+import com.u9porn.MyApplication;
 import com.u9porn.constants.Constants;
 import com.u9porn.data.cache.CacheProviders;
 import com.u9porn.data.db.entity.V9PornItem;
@@ -50,6 +52,7 @@ import com.u9porn.parser.ParsePxgav;
 import com.u9porn.parser.ParseV9PronVideo;
 import com.u9porn.parser.v9porn.VideoPlayUrlParser;
 import com.u9porn.rxjava.RetryWhenProcess;
+import com.u9porn.ui.porn9video.play.PlayVideoPresenter;
 import com.u9porn.utils.AddressHelper;
 import com.u9porn.utils.UserHelper;
 
@@ -61,6 +64,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Function;
 import io.rx_cache2.DynamicKey;
 import io.rx_cache2.DynamicKeyGroup;
 import io.rx_cache2.EvictDynamicKey;
@@ -100,6 +106,14 @@ public class AppApiHelper implements ApiHelper {
     private Gson gson;
     private User user;
     private final VideoPlayUrlParser videoPlayUrlParser;
+
+    class InJavaScriptLocalObj {
+        @JavascriptInterface
+        public void showSource(String html) {
+            Logger.d("HTML", html);
+        }
+    }
+
     @Inject
     public AppApiHelper(CacheProviders cacheProviders, V9PornServiceApi v9PornServiceApi, Forum9PronServiceApi forum9PronServiceApi, GitHubServiceApi gitHubServiceApi, MeiZiTuServiceApi meiZiTuServiceApi, Mm99ServiceApi mm99ServiceApi, PavServiceApi pavServiceApi, ProxyServiceApi proxyServiceApi, HuaBanServiceApi huaBanServiceApi, AxgleServiceApi axgleServiceApi, AddressHelper addressHelper, Gson gson, MyProxySelector myProxySelector, User user, VideoPlayUrlParser videoPlayUrlParser) {
         this.cacheProviders = cacheProviders;
@@ -192,8 +206,30 @@ public class AppApiHelper implements ApiHelper {
     public Observable<VideoResult> loadPorn9VideoUrl(String viewKey) {
         String ip = addressHelper.getRandomIPAddress();
         //因为登录后不在返回用户uid，需要在此页面获取，所以当前页面不在缓存，确保用户登录后刷新当前页面可以获取到用户uid
-        return v9PornServiceApi.getVideoPlayPage(viewKey, ip, HeaderUtils.getIndexHeader(addressHelper))
-                .map(html -> videoPlayUrlParser.parseVideoPlayUrl(html,user));
+        return v9PornServiceApi.getVideoPlayPage(viewKey,  HeaderUtils.getIndexHeader(addressHelper))
+                .map(html -> videoPlayUrlParser.parseVideoPlayUrl(html, user));
+//        return Observable.create(new ObservableOnSubscribe(){
+//            @Override
+//            public void subscribe(ObservableEmitter emitter) throws Exception {
+//                Map<String, String > headers = new HashMap<String, String>();
+//                headers.put("X-Forwarded-For",ip);
+//                headers.put("Referer", HeaderUtils.getIndexHeader(addressHelper));
+//                MyApplication.getInstance().getWebView().addJavascriptInterface(new InJavaScriptLocalObj(){
+//                    @JavascriptInterface
+//                    @Override
+//                    public void showSource(String html) {
+//                        Logger.t(TAG).d("Webview 取回来的html source: "+html);
+//                        emitter.onNext(html);
+//                    }
+//                },"local_obj");
+//                MyApplication.getInstance().getWebView().loadUrl(MyApplication.getInstance().getAddressHelper().getVideo9PornAddress()+"view_video.php"+"?viewkey="+viewKey);
+//            }
+//        }).map(new Function<String,VideoResult>() {
+//            @Override
+//            public VideoResult apply(String html) throws Exception {
+//                return videoPlayUrlParser.parseVideoPlayUrl(html, user);
+//            }
+//        });
     }
 
     @Override
@@ -233,30 +269,45 @@ public class AppApiHelper implements ApiHelper {
     }
 
     @Override
-    public Observable<String> favoritePorn9Video(String uId, String videoId, String ownnerId) {
+    public Observable<String> favoritePorn9Video(String uId, String videoId, String uvid) {
         String cpaintFunction = "addToFavorites";
         String responseType = "json";
-        return v9PornServiceApi.favoriteVideo(cpaintFunction, uId, videoId, ownnerId, responseType, HeaderUtils.getIndexHeader(addressHelper))
-                .map(s -> {
-                    Logger.t(TAG).d("favoriteStr: " + s);
-                    return new Gson().fromJson(s, FavoriteJsonResult.class);
-                })
-                .map(favoriteJsonResult -> favoriteJsonResult.getAddFavMessage().get(0).getData())
-                .map(code -> {
-                    String msg;
-                    switch (code) {
-                        case FavoriteJsonResult.FAVORITE_SUCCESS:
-                            msg = "收藏成功";
-                            break;
-                        case FavoriteJsonResult.FAVORITE_FAIL:
-                            throw new FavoriteException("收藏失败");
-                        case FavoriteJsonResult.FAVORITE_YOURSELF:
-                            throw new FavoriteException("不能收藏自己的视频");
-                        default:
-                            throw new FavoriteException("收藏失败");
-                    }
-                    return msg;
-                });
+//        return v9PornServiceApi.favoriteVideo(cpaintFunction, uId, videoId, uvid, responseType, HeaderUtils.getIndexHeader(addressHelper))
+//                .map(s -> {
+//                    Logger.t(TAG).d("favoriteStr: " + s);
+//                    return new Gson().fromJson(s, FavoriteJsonResult.class);
+//                })
+//                .map(favoriteJsonResult -> favoriteJsonResult.getAddFavMessage().get(0).getData())
+//                .map(code -> {
+//                    String msg;
+//                    switch (code) {
+//                        case FavoriteJsonResult.FAVORITE_SUCCESS:
+//                            msg = "收藏成功";
+//                            break;
+//                        case FavoriteJsonResult.FAVORITE_FAIL:
+//                            throw new FavoriteException("收藏失败");
+//                        case FavoriteJsonResult.FAVORITE_YOURSELF:
+//                            throw new FavoriteException("不能收藏自己的视频");
+//                        default:
+//                            throw new FavoriteException("收藏失败");
+//                    }
+//                    return msg;
+//                });
+        return v9PornServiceApi.favoriteVideo(videoId, uId, uvid, HeaderUtils.getIndexHeader(addressHelper)).map(code -> {
+            String msg;
+            switch (Integer.parseInt(code)) {
+                case FavoriteJsonResult.FAVORITE_SUCCESS:
+                    msg = "收藏成功";
+                    break;
+                case FavoriteJsonResult.FAVORITE_FAIL:
+                    throw new FavoriteException("收藏失败");
+                case FavoriteJsonResult.FAVORITE_YOURSELF:
+                    throw new FavoriteException("不能收藏自己的视频");
+                default:
+                    throw new FavoriteException("收藏失败");
+            }
+            return msg;
+        });
     }
 
     @Override
