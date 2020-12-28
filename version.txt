@@ -1,13 +1,9 @@
 {
-"apkDownloadUrl": "https://cdn.jsdelivr.net/gh/techGay/v9porn@master/apk/v9porn-v1.1.9.apk",
+"apkDownloadUrl": "https://cdn.jsdelivr.net/gh/techGay/v9porn@master/apk/v9porn-v1.2.0.apk",
 "updateMessage": "
-修复了两个问题\n
-
-**注：为了能让应用存活更久点，从当前版本开始，暂停上传源码**\n
-
-1. 修复9*porn解析视频偶尔失败问题\n
-1. 修复axgle无法播放问题\n
+1. 修复由于服务器改用m3u8导致无法播放问题，当前版本无法下载视频，无法缓存\n
+2. 部分无法解析崩溃用户可以尝试点击下方+号倒数第二个，看看能不能播放，之后退出来重新打开\n
 ",
-"versionCode": 20,
-"versionName": "1.1.9"
+"versionCode": 21,
+"versionName": "1.2.0"
 }
