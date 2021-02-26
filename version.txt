@@ -3,6 +3,6 @@
 "updateMessage": "
 1. 修复9*porn解析视频连接出错问题
 ",
-"versionCode": 23,
-"versionName": "1.2.2"
+"versionCode": 22,
+"versionName": "1.2.1"
 }
