@@ -1,9 +1,9 @@
 {
   "noticeMessage": "
-    当前v1.0.9无法登录9*porn的，请卸载重装（如果已自动升级过，则升级的安装包在Download目录下，否则请手动下载安装）。
+    v1.2.1解析错误的小伙伴请手动下载apk安装包覆盖安装即可
   ",
-  "noticeTime": "2019年01月13日",
+  "noticeTime": "2021年02月27日",
    "noticeTitle": "公告",
    "noticeer": "Adimn",
-   "versionCode": 4
+   "versionCode": 5
  }
