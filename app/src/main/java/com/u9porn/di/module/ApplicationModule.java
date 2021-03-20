@@ -29,7 +29,8 @@ import com.u9porn.di.DatabaseInfo;
 import com.u9porn.di.PreferenceInfo;
 import com.u9porn.parser.v9porn.VideoPlayUrlParser;
 
-import com.u9porn.parser.v9porn.d20201009.VideoUrlParser;
+
+import com.u9porn.parser.v9porn.d20210320.VideoUrlParser;
 import com.u9porn.utils.AddressHelper;
 import com.u9porn.utils.AppCacheUtils;
 import com.u9porn.utils.MyHeaderInjector;
