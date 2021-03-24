@@ -48,9 +48,13 @@ public abstract class BaseVideoPlayUrlParser {
         videoResult.setAddDate(addDate);
         Logger.t(TAG).d("添加时间：" + addDate);
 
-        String otherInfo = doc.select("div[id=videodetails-content]").get(1).select("div").get(4).select("span[class=more title]").text();
-        videoResult.setUserOtherInfo(otherInfo);
-        Logger.t(TAG).d(otherInfo);
+        try {
+            String otherInfo = doc.select("div[id=videodetails-content]").get(1).select("div").get(4).select("span[class=more title]").text();
+            videoResult.setUserOtherInfo(otherInfo);
+            Logger.t(TAG).d(otherInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             String thumImg = doc.getElementById("player_one").attr("poster");

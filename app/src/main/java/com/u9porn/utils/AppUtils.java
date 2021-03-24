@@ -1,6 +1,7 @@
 package com.u9porn.utils;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ImageView;
 
 import com.u9porn.R;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * @author flymegoc
@@ -73,5 +78,23 @@ public class AppUtils {
                 "</body>\n" +
                 "</html>";
         return dat1 + data + dat2;
+    }
+
+    public static String getAssetsAsString(Context context, String fileName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            //获取assets资源管理器
+            AssetManager assetManager = context.getAssets();
+            //通过管理器打开文件并读取
+            BufferedReader bf = new BufferedReader(new InputStreamReader(
+                    assetManager.open(fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 }
