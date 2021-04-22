@@ -145,4 +145,6 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.8.6'
     implementation 'com.tencent.bugly:nativecrashreport:3.6.0'
     implementation "ru.noties:markwon:$rootProject.markwonVersion"
+
+    implementation 'io.apisense:rhino-android:1.0'
 }
