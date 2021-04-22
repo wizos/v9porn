@@ -1,9 +1,9 @@
 {
   "noticeMessage": "
-    v1.2.2出现503的小伙伴请手动下载apk安装包覆盖安装即可
+    v1.2.3由于安装包超过github限制，需要手动下载升级
   ",
-  "noticeTime": "2021年03月04日",
+  "noticeTime": "2021年04月22日",
    "noticeTitle": "公告",
    "noticeer": "Adimn",
-   "versionCode": 6
+   "versionCode": 7
  }
