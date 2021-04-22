@@ -1,7 +1,9 @@
 {
 "apkDownloadUrl": "https://cdn.jsdelivr.net/gh/techGay/v9porn@master/apk/v9porn-v1.2.3.apk",
 "updateMessage": "
-1. 修复服务器ddos防御导致的503无法访问问题（跳转后根据提示完成验证即可，通不过请手动下载apk安装）
+1. 修复妹子图继续错误问题\n
+2. 修复p*gav视频播放问题\n
+3. 修复a*gle换了验证之后窗口太小无法验证问题
 ",
 "versionCode": 24,
 "versionName": "1.2.3"
