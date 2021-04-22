@@ -114,7 +114,7 @@ dependencies {
     implementation 'com.github.rubensousa:floatingtoolbar:1.5.1'
     implementation 'com.qmuiteam:qmui:1.2.0'
     implementation 'com.github.arcadefire:nice-spinner:1.3.1'
-    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'org.greenrobot:greendao:3.3.0'
     // add library
     implementation 'de.greenrobot:java-common:2.3.1'
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.0.1'
