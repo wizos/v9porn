@@ -1,10 +1,10 @@
 {
-"apkDownloadUrl": "https://raw.githubusercontent.com/techGay/v9porn/master/apk/v9porn-v1.1.8.apk",
+"apkDownloadUrl": "https://cdn.jsdelivr.net/gh/techGay/v9porn@master/apk/v9porn-v1.2.3.apk",
 "updateMessage": "
-本次更新主要是更换了视频地址解析，当前版本还去掉了随机ip头，因为当前视频服务器只会认定直连的ip才能播放
-，所以可能会有次数观看限制，目前所知道的唯一的版本就是换梯子破除限制。!具体更新如下：\n
-1. 更换新的解析方法，更快更高效解析视频地址
+1. 修复妹子图继续错误问题\n
+2. 修复p*gav视频播放问题\n
+3. 修复a*gle换了验证之后窗口太小无法验证问题
 ",
-"versionCode": 19,
-"versionName": "1.1.8"
+"versionCode": 24,
+"versionName": "1.2.3"
 }
